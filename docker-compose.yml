@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  tasklibrary_sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+  tasklibrary_redis:
+    image: redis
+
+  tasklibrary_rabbitmq:
+    image: rabbitmq:3-management
+
+  tasklibrary_api:
+    image: ${DOCKER_REGISTRY-}tasklibraryapi
+    build:
+      context: .
+      dockerfile: System/Api/TaskLibrary.Api/Dockerfile
+    depends_on:
+      - tasklibrary_sqlserver
+      - tasklibrary_rabbitmq
+      - tasklibrary_redis
+
+  tasklibrary_identity:
+    image: ${DOCKER_REGISTRY-}tasklibraryidentity
+    build:
+      context: .
+      dockerfile: System/Identity/TaskLibrary.Identity/Dockerfile
+    depends_on:
+      - tasklibrary_sqlserver
+      - tasklibrary_rabbitmq
+      - tasklibrary_redis
+    

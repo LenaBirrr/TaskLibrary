@@ -1,0 +1,53 @@
+version: '3.4'
+
+services:
+  tasklibrary_sqlserver:
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "21433:1433"
+    networks:
+      - shared-tasklibrary-net
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  tasklibrary_redis:
+    ports:
+      - "26379:6379"
+    networks:
+      - shared-tasklibrary-net
+
+  tasklibrary_rabbitmq:
+    ports:
+      - "25672:5672"
+      - "25673:5673"
+      - "35672:15672" 
+    networks:
+      - shared-tasklibrary-net
+    volumes:      
+      - rabbitmq-data:/var/lib/rabbitmq/
+  tasklibrary_api:
+    ports:
+      - "20000:80"
+    networks:
+      - shared-tasklibrary-net
+    env_file:
+      - env.api
+
+  tasklibrary_identity:
+    ports:
+      - "20001:80"
+    networks:
+      - shared-tasklibrary-net
+    env_file:
+      - env.identity
+volumes:
+  sqlserver-data:
+  rabbitmq-data:
+
+networks:
+  shared-tasklibrary-net:
+    name: TaskLibrary
+    driver: bridge
