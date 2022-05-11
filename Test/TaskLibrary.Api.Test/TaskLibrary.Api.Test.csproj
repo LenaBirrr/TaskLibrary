@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.17.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Logging" Version="6.17.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="6.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
+	<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+	<PackageReference Include="coverlet.collector" Version="3.1.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Data\Context\TaskLibrary.Db.Context\TaskLibrary.Db.Context.csproj" />
+    <ProjectReference Include="..\..\Data\Entities\TaskLibrary.Db.Entities\TaskLibrary.Db.Entities.csproj" />
+    <ProjectReference Include="..\..\Services\TaskLibrary.Settings\TaskLibrary.Settings.csproj" />
+    <ProjectReference Include="..\..\System\Api\TaskLibrary.Api\TaskLibrary.Api.csproj" />
+    <ProjectReference Include="..\..\System\Identity\TaskLibrary.Identity\TaskLibrary.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

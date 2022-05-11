@@ -36,7 +36,7 @@ namespace TaskLibrary.Api.Middlewares
             }
             finally
             {
-                if (!(response is null))
+                if (response is not null)
                 {
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     context.Response.ContentType = "application/json";

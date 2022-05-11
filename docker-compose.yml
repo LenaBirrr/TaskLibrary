@@ -29,4 +29,26 @@ services:
       - tasklibrary_sqlserver
       - tasklibrary_rabbitmq
       - tasklibrary_redis
+
+  tasklibrary_worker:
+    image: ${DOCKER_REGISTRY-}tasklibraryworker
+    build:
+      context: .
+      dockerfile: System/Worker/TaskLibrary.Worker/Dockerfile
+    depends_on:
+      - tasklibrary_sqlserver
+      - tasklibrary_rabbitmq
+      - tasklibrary_redis 
+
+  tasklibrary_web:
+    image: ${DOCKER_REGISTRY-}tasklibraryweb
+    build:
+      context: .
+      dockerfile: System/Web/TaskLibrary.Web/Dockerfile
+    depends_on:
+      - tasklibrary_sqlserver
+      - tasklibrary_rabbitmq 
+      - tasklibrary_redis 
     
+
+

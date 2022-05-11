@@ -1,0 +1,77 @@
+﻿@using System.Security.Claims
+@using TaskLibrary.WEB
+@using TaskLibrary.Web.Pages.Notifications.Models
+@using TaskLibrary.Web.Pages.Notifications.Services
+@inherits MudComponentBase
+
+@inject INotificationService languageService
+@inject IAuthService auth
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="model" @ref="form" Validation="@(modelValidator.ValidateValue)">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Text" @bind-Value="model.Text"
+                                  For="@(() => model.Text)"
+                                  Required="true"
+                                  RequiredError="Text is required!"
+                                  >
+                    </MudTextField>
+                    
+                                
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="MudBlazor.Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+
+    MudForm form = default!;
+    NotificationModelValidator modelValidator = new  NotificationModelValidator();
+
+    bool isNew = false;
+
+    [Parameter]
+    public int? NotificationId { get; set; } = default;
+
+    [Parameter]
+    public NotificationModel model { get; set; } = new() { };
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+    
+        isNew = NotificationId == null;
+        if (!isNew)
+        {
+            var not = await languageService.GetNotification(NotificationId ?? 0);
+
+            model.Id = not.Id;
+            model.Text = not.Text;
+            
+
+        }
+
+        form.ResetValidation();
+    }
+
+    async Task Submit()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

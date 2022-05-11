@@ -43,6 +43,21 @@ services:
       - shared-tasklibrary-net
     env_file:
       - env.identity
+
+  tasklibrary_worker:
+    networks:
+      - shared-tasklibrary-net
+    env_file:
+      - env.worker
+
+  tasklibrary_web:
+    ports:
+      - "20002:80"
+    networks:
+      - shared-tasklibrary-net
+
+
+
 volumes:
   sqlserver-data:
   rabbitmq-data:
@@ -51,3 +66,11 @@ networks:
   shared-tasklibrary-net:
     name: TaskLibrary
     driver: bridge
+
+
+
+
+
+
+
+

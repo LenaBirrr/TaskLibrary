@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskLibrary.Api.Controllers.ProgrammingTasks.Models;
+using TaskLibrary.Common.Security;
 using TaskLibrary.ProgrammingTaskService;
 using TaskLibrary.ProgrammingTaskService.Models;
 
@@ -10,6 +12,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
     [Route("api/v{version:apiVersion}/tasks")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize]
     public class ProgrammingTaskController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -24,7 +27,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
         }
 
         [HttpGet("")]
-        // [Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.ProgrammingTasksRead)]
         public async Task<IEnumerable<ProgrammingTaskResponse>> GetProgrammingTasks()
         {
             var programmingTasks = await programmingTaskService.GetProgrammingTasks();
@@ -33,6 +36,8 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
             return response;
         }
         [HttpGet("Bycategory/{id}")]
+        [Authorize(AppScopes.ProgrammingTasksRead)]
+
         public async Task<IEnumerable<ProgrammingTaskResponse>> GetProgrammingTasksByCategory([FromRoute] int id)
         {
             var programmingTasks = await programmingTaskService.GetProgrammingTasksByCategory(id);
@@ -43,7 +48,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
         
 
         [HttpGet("{id}")]
-        //[Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.ProgrammingTasksRead)]
         public async Task<ProgrammingTaskResponse> GetProgrammingTaskById([FromRoute] int id)
         {
             var programmingTask = await programmingTaskService.GetProgrammingTask(id);
@@ -53,7 +58,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
         }
 
         [HttpPost("")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingTasksWrite)]
         public async Task<ProgrammingTaskResponse> AddProgrammingTask([FromBody] AddProgrammingTaskRequest request)
         {
             var model = mapper.Map<AddProgrammingTaskModel>(request);
@@ -64,7 +69,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
         }
 
         [HttpPut("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingTasksWrite)]
         public async Task<IActionResult> UpdateProgrammingTask([FromRoute] int id, [FromBody] UpdateProgrammingTaskRequest request)
         {
             var model = mapper.Map<UpdateProgrammingTaskModel>(request);
@@ -74,7 +79,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingTasks
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingTasksWrite)]
         public async Task<IActionResult> DeleteProgrammingTask([FromRoute] int id)
         {
             await programmingTaskService.DeleteProgrammingTask(id);

@@ -32,33 +32,35 @@ namespace TaskLibrary.SolutionService
             this.updateSolutionModelValidator = updateSolutionModelValidator;
         }
 
-        public async Task<IEnumerable<SolutionModel>> GetSolutions()
+        public async Task<IEnumerable<SolutionModel>> GetSolutions(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var soulutions = context
-                .Solutions
+                .Solutions.Include(x=>x.User).Include(x=>x.ProgrammingTask).Include(x=>x.ProgrammingLanguage)
                 .AsQueryable();
 
             soulutions = soulutions
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await soulutions.ToListAsync()).Select(soulution => mapper.Map<SolutionModel>(soulution));
 
             return data;
 
         }
-        public async Task<IEnumerable<SolutionModel>> GetSolutionsByTask(int taskId)
+        public async Task<IEnumerable<SolutionModel>> GetSolutionsByTask(int taskId, int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var soulutions = context
-                .Solutions
+                .Solutions.Include(x => x.User).Include(x => x.ProgrammingTask).Include(x => x.ProgrammingLanguage)
                 .Where(x => x.ProgrammingTaskId.Equals(taskId))
                 .AsQueryable();
 
             soulutions = soulutions
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await soulutions.ToListAsync()).Select(soulution => mapper.Map<SolutionModel>(soulution));
 
@@ -71,7 +73,7 @@ namespace TaskLibrary.SolutionService
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
-            var soulutions = await context.Solutions.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var soulutions = await context.Solutions.Include(x => x.User).Include(x => x.ProgrammingTask).Include(x => x.ProgrammingLanguage).FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             var data = mapper.Map<SolutionModel>(soulutions);
 

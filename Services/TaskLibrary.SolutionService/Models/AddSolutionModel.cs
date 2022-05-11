@@ -22,7 +22,7 @@ namespace TaskLibrary.SolutionService.Models
         public AddSolutionModelValidator()
         {
             RuleFor(x => x.Text)
-                .NotEmpty().WithMessage("Name is required.");
+                .NotEmpty().WithMessage("Text is required.");
             RuleFor(x => x.ProgrammingTaskId)
                 .NotEmpty().WithMessage("Task is required.");
         }

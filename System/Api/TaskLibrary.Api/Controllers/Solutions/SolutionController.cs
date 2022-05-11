@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskLibrary.Api.Controllers.Solutions.Models;
+using TaskLibrary.Common.Security;
 using TaskLibrary.SolutionService;
 using TaskLibrary.SolutionService.Models;
 
@@ -10,6 +12,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
     [Route("api/v{version:apiVersion}/solutions")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize]
     public class SolutionController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -24,7 +27,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpGet("")]
-        // [Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.SolutionsRead)]
         public async Task<IEnumerable<SolutionResponse>> GetSolutions()
         {
             var solutions = await solutionService.GetSolutions();
@@ -34,6 +37,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpGet("Bytask/{id}")]
+        [Authorize(AppScopes.SolutionsRead)]
         public async Task<IEnumerable<SolutionResponse>> GetSolutionsByTask([FromRoute] int id)
         {
             var solutions = await solutionService.GetSolutionsByTask(id);
@@ -43,7 +47,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpGet("{id}")]
-        //[Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.SolutionsRead)]
         public async Task<SolutionResponse> GetSolutionById([FromRoute] int id)
         {
             var solution = await solutionService.GetSolution(id);
@@ -53,7 +57,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpPost("")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SolutionsWrite)]
         public async Task<SolutionResponse> AddSolution([FromBody] AddSolutionRequest request)
         {
             var model = mapper.Map<AddSolutionModel>(request);
@@ -64,7 +68,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpPut("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SolutionsWrite)]
         public async Task<IActionResult> UpdateSolution([FromRoute] int id, [FromBody] UpdateSolutionRequest request)
         {
             var model = mapper.Map<UpdateSolutionModel>(request);
@@ -74,7 +78,7 @@ namespace TaskLibrary.Api.Controllers.Solutions
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SolutionsWrite)]
         public async Task<IActionResult> DeletSolution([FromRoute] int id)
         {
             await solutionService.DeleteSolution(id);

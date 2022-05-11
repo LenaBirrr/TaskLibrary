@@ -9,7 +9,7 @@ namespace TaskLibrary.CommentService
 {
     public interface ICommentService
     {
-        Task<IEnumerable<CommentModel>> GetComments();
+        Task<IEnumerable<CommentModel>> GetComments(int offset = 0, int limit = 10);
         Task<IEnumerable<CommentModel>> GetCommentsByTask(int taskId);
         Task<IEnumerable<CommentModel>> GetCommentsByUser(Guid userId);
         Task<CommentModel> GetComment(int id);

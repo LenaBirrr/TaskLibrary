@@ -32,16 +32,17 @@ namespace TaskLibrary.ProgrammingTaskService
             this.updateProgrammingTaskModelValidator = updateProgrammingTaskModelValidator;
         }
 
-        public async Task<IEnumerable<ProgrammingTaskModel>> GetProgrammingTasks()
+        public async Task<IEnumerable<ProgrammingTaskModel>> GetProgrammingTasks(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var progtasks = context
-                .ProgrammingTasks
+                .ProgrammingTasks.Include(x=>x.Category)
                 .AsQueryable();
 
             progtasks = progtasks
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await progtasks.ToListAsync()).Select(progtask => mapper.Map<ProgrammingTaskModel>(progtask));
 
@@ -49,17 +50,18 @@ namespace TaskLibrary.ProgrammingTaskService
 
         }
 
-        public async Task<IEnumerable<ProgrammingTaskModel>> GetProgrammingTasksByCategory(int categoryId)
+        public async Task<IEnumerable<ProgrammingTaskModel>> GetProgrammingTasksByCategory(int categoryId, int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var progtasks = context
-                .ProgrammingTasks
+                .ProgrammingTasks.Include(x => x.Category)
                 .Where(x => x.CategoryId.Equals(categoryId))
                 .AsQueryable();
 
             progtasks = progtasks
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await progtasks.ToListAsync()).Select(progtask => mapper.Map<ProgrammingTaskModel>(progtask));
 
@@ -72,7 +74,7 @@ namespace TaskLibrary.ProgrammingTaskService
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
-            var progtask = await context.ProgrammingTasks.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var progtask = await context.ProgrammingTasks.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             var data = mapper.Map<ProgrammingTaskModel>(progtask);
 

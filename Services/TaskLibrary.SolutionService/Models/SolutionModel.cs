@@ -29,9 +29,9 @@ namespace TaskLibrary.SolutionService.Models
         public SolutionModelProfile()
         {
             CreateMap<Solution, SolutionModel>()
-                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => (src.User != null ? src.User.FullName : "Неизвестный автор")))
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => (src.UserId != null ? src.User.FullName : "Неизвестный автор")))
                 .ForMember(dest => dest.ProgrammingTaskName, opt => opt.MapFrom(src => src.ProgrammingTask.Name))
-                .ForMember(dest => dest.ProgrammingLanguageName, opt => opt.MapFrom(src => src.ProgrammingLanguage != null ? src.ProgrammingLanguage.Name : "Язык не указан"));
+                .ForMember(dest => dest.ProgrammingLanguageName, opt => opt.MapFrom(src => src.ProgrammingLanguageId != null ? src.ProgrammingLanguage.Name : "Язык не указан"));
 
         }
     }

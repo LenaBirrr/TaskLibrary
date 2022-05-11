@@ -12,7 +12,6 @@ namespace TaskLibrary.NotificationService.Models
     {
         public int Id { get; set; }
 
-        public string CommentAuthor { get; set; }
         public string TaskName { get; set; }
         public int? SubscribtionId { get; set; }
         public string Text { get; set; }
@@ -22,7 +21,6 @@ namespace TaskLibrary.NotificationService.Models
         public NotificationModelProfile()
         {
             CreateMap<Notification, NotificationModel>()
-                .ForMember(dest => dest.CommentAuthor, opt => opt.MapFrom(src => (src.Subscription!=null)?src.Subscription.User.FullName:"[данные удалены]"))
                 .ForMember(dest => dest.TaskName, opt => opt.MapFrom(src => (src.Subscription != null)?src.Subscription.ProgrammingTask.Name: "[данные удалены]"));
         }
     }

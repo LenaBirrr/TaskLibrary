@@ -1,15 +1,19 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskLibrary.Api.Controllers.Comments.Models;
 using TaskLibrary.CommentService;
 using TaskLibrary.CommentService.Models;
+using TaskLibrary.Common.Security;
 
 namespace TaskLibrary.Api.Controllers.Comments
 {
         [Route("api/v{version:apiVersion}/comments")]
         [ApiController]
         [ApiVersion("1.0")]
+        [Authorize]
         public class CommentController : ControllerBase
         {
             private readonly IMapper mapper;
@@ -24,7 +28,7 @@ namespace TaskLibrary.Api.Controllers.Comments
             }
 
             [HttpGet("")]
-            // [Authorize(AppScopes.BooksRead)]
+            [Authorize(AppScopes.CommentsRead)]
             public async Task<IEnumerable<CommentResponse>> GetComments()
             {
                 var comments = await commentService.GetComments();
@@ -32,9 +36,13 @@ namespace TaskLibrary.Api.Controllers.Comments
 
                 return response;
             }
-            [HttpGet("Byuser/{id}")]
-            public async Task<IEnumerable<CommentResponse>> GetCommentsByUser([FromRoute] Guid id)
+            [HttpGet("Byuser")]
+            [Authorize(AppScopes.CommentsRead)]
+            public async Task<IEnumerable<CommentResponse>> GetCommentsByUser()
             {
+
+                var id = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
                 var comments = await commentService.GetCommentsByUser(id);
                 var response = mapper.Map<IEnumerable<CommentResponse>>(comments);
                 
@@ -42,6 +50,7 @@ namespace TaskLibrary.Api.Controllers.Comments
             }
 
             [HttpGet("Bytask/{id}")]
+            [Authorize(AppScopes.CommentsRead)]
             public async Task<IEnumerable<CommentResponse>> GetCommentsByTask([FromRoute] int id)
             {
                 var comments = await commentService.GetCommentsByTask(id);
@@ -52,7 +61,7 @@ namespace TaskLibrary.Api.Controllers.Comments
 
 
             [HttpGet("{id}")]
-            //[Authorize(AppScopes.BooksRead)]
+            [Authorize(AppScopes.CommentsRead)]
             public async Task<CommentResponse> GetCommentById([FromRoute] int id)
             {
                 var comment = await commentService.GetComment(id);
@@ -62,9 +71,10 @@ namespace TaskLibrary.Api.Controllers.Comments
             }
 
             [HttpPost("")]
-            //[Authorize(AppScopes.BooksWrite)]
+            [Authorize(AppScopes.CommentsWrite)]
             public async Task<CommentResponse> AddComment([FromBody] AddCommentRequest request)
             {
+                request.UserId = new Guid (User.FindFirstValue(ClaimTypes.NameIdentifier));
                 var model = mapper.Map<AddCommentModel>(request);
                 var comment = await commentService.AddComment(model);
                 var response = mapper.Map<CommentResponse>(comment);
@@ -73,7 +83,7 @@ namespace TaskLibrary.Api.Controllers.Comments
             }
 
             [HttpPut("{id}")]
-            //[Authorize(AppScopes.BooksWrite)]
+            [Authorize(AppScopes.CommentsWrite)]
             public async Task<IActionResult> UpdateComment([FromRoute] int id, [FromBody] UpdateCommentRequest request)
             {
                 var model = mapper.Map<UpdateCommentModel>(request);
@@ -83,7 +93,7 @@ namespace TaskLibrary.Api.Controllers.Comments
             }
 
             [HttpDelete("{id}")]
-            //[Authorize(AppScopes.BooksWrite)]
+            [Authorize(AppScopes.CommentsWrite)]
             public async Task<IActionResult> DeleteComment([FromRoute] int id)
             {
                 await commentService.DeleteComment(id);

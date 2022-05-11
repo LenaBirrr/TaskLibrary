@@ -14,6 +14,6 @@ namespace TaskLibrary.Settings
         public string Url => source.GetAsString("IdentityServer:Url");
         public string ClientId => source.GetAsString("IdentityServer:ClientId");
         public string ClientSecret => source.GetAsString("IdentityServer:ClientSecret");
-        //public bool RequireHttps => Url.ToLower().StartsWith("https://");
+        public bool RequireHttps => Url.ToLower().StartsWith("https://");
     }
 }

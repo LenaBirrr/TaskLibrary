@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskLibrary.Api.Controllers.ProgrammingLanguages.Models;
+using TaskLibrary.Common.Security;
 using TaskLibrary.ProgrammingLanguageService;
 using TaskLibrary.ProgrammingLanguageService.Models;
 
@@ -10,6 +12,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
     [Route("api/v{version:apiVersion}/languages")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize]
     public class ProgrammingLanguageController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -24,7 +27,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
         }
 
         [HttpGet("")]
-        // [Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.ProgrammingLanguagesRead)]
         public async Task<IEnumerable<ProgrammingLanguageResponse>> GetProgrammingLanguages()
         {
             var programmingLanguages = await programmingLanguageService.GetProgrammingLanguages();
@@ -34,7 +37,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
         }
 
         [HttpGet("{id}")]
-        //[Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.ProgrammingLanguagesRead)]
         public async Task<ProgrammingLanguageResponse> GetProgrammingLanguageById([FromRoute] int id)
         {
             var programmingLanguage = await programmingLanguageService.GetProgrammingLanguage(id);
@@ -44,7 +47,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
         }
 
         [HttpPost("")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingLanguagesWrite)]
         public async Task<ProgrammingLanguageResponse> AddProgrammingLanguage([FromBody] AddProgrammingLanguageRequest request)
         {
             var model = mapper.Map<AddProgrammingLanguageModel>(request);
@@ -55,7 +58,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
         }
 
         [HttpPut("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingLanguagesWrite)]
         public async Task<IActionResult> UpdateProgrammingLanguage([FromRoute] int id, [FromBody] UpdateProgrammingLanguageRequest request)
         {
             var model = mapper.Map<UpdateProgrammingLanguageModel>(request);
@@ -65,7 +68,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.ProgrammingLanguagesWrite)]
         public async Task<IActionResult> DeleteProgrammingLanguage([FromRoute] int id)
         {
             await programmingLanguageService.DeleteProgrammingLanguage(id);

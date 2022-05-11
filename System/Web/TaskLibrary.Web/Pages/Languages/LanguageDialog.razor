@@ -1,0 +1,95 @@
+﻿@using System.Security.Claims
+@using TaskLibrary.WEB
+@using TaskLibrary.Web.Pages.Languages.Models
+@using TaskLibrary.Web.Pages.Languages.Services
+@inherits MudComponentBase
+
+@inject ILanguageService languageService
+@inject IAuthService auth
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="model" @ref="form" Validation="@(modelValidator.ValidateValue)">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField Label="Name" @bind-Value="model.Name"
+                                  For="@(() => model.Name)"
+                                  Required="true"
+                                  RequiredError="Name is required!"
+                                  >
+                    </MudTextField>
+                    <MudTextField Label="Level" @bind-Value="model.Level"
+                                  For="@(() => model.Level)"
+                                  Required="true"
+                                  RequiredError="Level is required!"
+                                  >
+                   </MudTextField>
+                    <MudTextField Label="Paradigm" @bind-Value="model.Paradigm"
+                                  For="@(() => model.Paradigm)"
+                                  Required="true"
+                                  RequiredError="Paradigm is required!"
+                                  >
+                   </MudTextField>
+                   <MudTextField Label="Realization" @bind-Value="model.Realization"
+                                  For="@(() => model.Realization)"
+                                  Required="true"
+                                  RequiredError="Realization is required!"
+                                  >
+                   </MudTextField>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="MudBlazor.Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+
+    MudForm form = default!;
+    LanguageModelValidator modelValidator = new  LanguageModelValidator();
+
+    bool isNew = false;
+
+    [Parameter]
+    public int? LanguageId { get; set; } = default;
+
+    [Parameter]
+    public LanguageModel model { get; set; } = new() { };
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+    
+        isNew = LanguageId == null;
+        if (!isNew)
+        {
+            var language = await languageService.GetLanguage(LanguageId ?? 0);
+
+            model.Id = language.Id;
+            model.Name = language.Name;
+            model.Level = language.Level;
+            model.Paradigm = language.Paradigm;
+            model.Realization = language.Realization;
+
+        }
+
+        form.ResetValidation();
+    }
+
+    async Task Submit()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -9,9 +9,9 @@ namespace TaskLibrary.SolutionService
 {
     public interface ISolutionService
     {
-        Task<IEnumerable<SolutionModel>> GetSolutions();
+        Task<IEnumerable<SolutionModel>> GetSolutions(int offset = 0, int limit = 10);
 
-        Task<IEnumerable<SolutionModel>> GetSolutionsByTask(int taskId);
+        Task<IEnumerable<SolutionModel>> GetSolutionsByTask(int taskId, int offset = 0, int limit = 10);
 
         Task<SolutionModel> GetSolution(int id);
         Task<SolutionModel> AddSolution(AddSolutionModel model);

@@ -5,6 +5,7 @@ using TaskLibrary.Settings;
 using Microsoft.OpenApi.Any;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using IdentityServer4.AccessTokenValidation;
+using TaskLibrary.Common.Security;
 
 namespace TaskLibrary.Api.Configuration
 {
@@ -47,23 +48,9 @@ namespace TaskLibrary.Api.Configuration
 
                 //options.IncludeXmlComments(xmlPath);
 
-                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                  {
-                      Name = IdentityServerAuthenticationDefaults.AuthenticationScheme,
-                      Type = SecuritySchemeType.OAuth2,
-                      Scheme = "oauth2",
-                      BearerFormat = "JWT",
-                      In = ParameterLocation.Header,
-                      Flows = new OpenApiOAuthFlows
-                      {
-                          Password = new OpenApiOAuthFlow
-                          {
-                              TokenUrl = new Uri($"{settings.IdentityServer.Url}/connect/token")
-                          }
-                      }
-                  });
-  
-                /*options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                
+
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Name = IdentityServerAuthenticationDefaults.AuthenticationScheme,
                     Type = SecuritySchemeType.OAuth2,
@@ -77,21 +64,44 @@ namespace TaskLibrary.Api.Configuration
                             TokenUrl = new Uri($"{settings.IdentityServer.Url}/connect/token"),
                             Scopes = new Dictionary<string, string>
                         {
-                            {AppScopes.BooksRead, "BooksRead"},
-                            {AppScopes.BooksWrite, "BooksWrite"}
-                        }
+                            {AppScopes.CategoriesRead, "CategoriesRead"},
+                            {AppScopes.CategoriesWrite, "CategoriesWrite"},
+                            {AppScopes.CommentsRead, "CommentsRead"},
+                            {AppScopes.CommentsWrite, "CommentsWrite"},
+                            {AppScopes.NotificationsRead, "NotificationsRead" },
+                            {AppScopes.ProgrammingLanguagesRead,"ProgrammingLanguagesRead" },
+                            {AppScopes.ProgrammingLanguagesWrite, "programmingLanguagesWrite"},
+                            {AppScopes.ProgrammingTasksRead,"ProgrammingTasksRead"},
+                            {AppScopes.ProgrammingTasksWrite, "ProgrammingTasksWrite"},
+                            {AppScopes.SolutionsRead, "solutionsRead"},
+                            {AppScopes.SolutionsWrite, "solutionsWrite"},
+                            {AppScopes.SubscriptionsRead, "subscripionsRead"},
+                            {AppScopes.SubscriptionsWrite,"SubscripionsWrite"},
+    }
                         },
                         ClientCredentials = new OpenApiOAuthFlow
                         {
                             TokenUrl = new Uri($"{settings.IdentityServer.Url}/connect/token"),
                             Scopes = new Dictionary<string, string>
                         {
-                            {AppScopes.BooksRead, "BooksRead"},
-                            {AppScopes.BooksWrite, "BooksWrite"}
-                        }
+                            {AppScopes.CategoriesRead, "CategoriesRead"},
+                            {AppScopes.CategoriesWrite, "CategoriesWrite"},
+                            {AppScopes.CommentsRead, "CommentsRead"},
+                            {AppScopes.CommentsWrite, "CommentsWrite"},
+                            {AppScopes.NotificationsRead, "NotificationsRead" },
+                            {AppScopes.ProgrammingLanguagesRead,"ProgrammingLanguagesRead" },
+                            {AppScopes.ProgrammingLanguagesWrite, "ProgrammingLanguagesWrite"},
+                            {AppScopes.ProgrammingTasksRead,"ProgrammingTasksRead"},
+                            {AppScopes.ProgrammingTasksWrite, "ProgrammingTasksRead"},
+                            {AppScopes.SolutionsRead, "SolutionsRead"},
+                            {AppScopes.SolutionsWrite, "SolutionsWrite"},
+                            {AppScopes.SubscriptionsRead, "SubscripionsRead"},
+                            {AppScopes.SubscriptionsWrite,"SubscripionsWrite"},
+                        },
+
                         }
                     }
-                });*/
+                });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {

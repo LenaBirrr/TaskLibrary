@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskLibrary.Api.Controllers.Subscriptions.Models;
+using TaskLibrary.Common.Security;
 using TaskLibrary.SubscriptionService;
 using TaskLibrary.SubscriptionService.Models;
 
@@ -10,6 +12,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
     [Route("api/v{version:apiVersion}/subscription")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize]
     public class SubscriptionController : Controller
     {
         private readonly IMapper mapper;
@@ -24,7 +27,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
         }
 
         [HttpGet("")]
-        // [Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.SubscriptionsRead)]
         public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptions()
         {
             var subscriptions = await subscriptionService.GetSubscriptions();
@@ -32,9 +35,11 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
 
             return response;
         }
-        [HttpGet("Byuser/{id}")]
-        public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptionsByUser([FromRoute] Guid id)
+        [HttpGet("Byuser")]
+        [Authorize(AppScopes.SubscriptionsRead)]
+        public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptionsByUser()
         {
+            var id = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var subscriptions = await subscriptionService.GetSubscriptionsByUser(id);
             var response = mapper.Map<IEnumerable<SubscriptionResponse>>(subscriptions);
 
@@ -52,7 +57,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
 
 
         [HttpGet("{id}")]
-        //[Authorize(AppScopes.BooksRead)]
+        [Authorize(AppScopes.SubscriptionsRead)]
         public async Task<SubscriptionResponse> GetSubscriptionById([FromRoute] int id)
         {
             var subscription = await subscriptionService.GetSubscription(id);
@@ -62,7 +67,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
         }
 
         [HttpPost("")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SubscriptionsWrite)]
         public async Task<SubscriptionResponse> AddSubscription([FromBody] AddSubscriptionRequest request)
         {
             var model = mapper.Map<AddSubscriptionModel>(request);
@@ -73,7 +78,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
         }
 
         [HttpPut("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SubscriptionsWrite)]
         public async Task<IActionResult> UpdateSubscription([FromRoute] int id, [FromBody] UpdateSubscriptionRequest request)
         {
             var model = mapper.Map<UpdateSubscriptionModel>(request);
@@ -83,7 +88,7 @@ namespace TaskLibrary.Api.Controllers.Subscriptions
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(AppScopes.BooksWrite)]
+        [Authorize(AppScopes.SubscriptionsWrite)]
         public async Task<IActionResult> DeleteSubscription([FromRoute] int id)
         {
             await subscriptionService.DeleteSubscription(id);

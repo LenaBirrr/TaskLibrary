@@ -9,10 +9,10 @@ namespace TaskLibrary.SubscriptionService
 {
     public interface ISubscriptionService
     {
-        Task<IEnumerable<SubscriptionModel>> GetSubscriptions();
+        Task<IEnumerable<SubscriptionModel>> GetSubscriptions(int offset = 0, int limit = 10);
 
-        Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByUser(Guid userId);
-        Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByTask(int taskId);
+        Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByUser(Guid userId, int offset = 0, int limit = 10);
+        Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByTask(int taskId, int offset = 0, int limit = 10);
 
         Task<SubscriptionModel> GetSubscription(int id);
         Task<SubscriptionModel> AddSubscription(AddSubscriptionModel model);

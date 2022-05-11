@@ -33,7 +33,7 @@ namespace TaskLibrary.ProgrammingLanguageService
             this.updateProgrammingLanguageModelValidator = updateProgrammingLanguageModelValidator;
         }
 
-        public async Task<IEnumerable<ProgrammingLanguageModel>> GetProgrammingLanguages()
+        public async Task<IEnumerable<ProgrammingLanguageModel>> GetProgrammingLanguages(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
@@ -42,7 +42,8 @@ namespace TaskLibrary.ProgrammingLanguageService
                 .AsQueryable();
 
             proglangs = proglangs
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await proglangs.ToListAsync()).Select(proglang => mapper.Map<ProgrammingLanguageModel>(proglang));
 

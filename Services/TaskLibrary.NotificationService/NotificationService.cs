@@ -29,16 +29,36 @@ namespace TaskLibrary.NotificationService
             this.addNotificationModelValidator = addNotificationModelValidator;
         }
 
-        public async Task<IEnumerable<NotificationModel>> GetNotifications()
+        public async Task<IEnumerable<NotificationModel>> GetNotifications(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var notifications = context
-                .Notifications
+                .Notifications.Include(x=>x.Subscription!.ProgrammingTask).Include(x=>x.Subscription!.User)
                 .AsQueryable();
 
             notifications = notifications
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
+
+            var data = (await notifications.ToListAsync()).Select(notification => mapper.Map<NotificationModel>(notification));
+
+            return data;
+
+        }
+
+        public async Task<IEnumerable<NotificationModel>> GetNotificationsByUser(Guid userId,int offset = 0, int limit = 10)
+        {
+            using var context = await contextFactory.CreateDbContextAsync();
+
+            var notifications = context
+                .Notifications.Include(x => x.Subscription!.ProgrammingTask).Include(x => x.Subscription!.User)
+                .Where(x=>x.Subscription!.UserId== userId)
+                .AsQueryable();
+
+            notifications = notifications
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await notifications.ToListAsync()).Select(notification => mapper.Map<NotificationModel>(notification));
 

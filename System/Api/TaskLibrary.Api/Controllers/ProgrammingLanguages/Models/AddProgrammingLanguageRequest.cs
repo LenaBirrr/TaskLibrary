@@ -37,7 +37,7 @@ namespace TaskLibrary.Api.Controllers.ProgrammingLanguages.Models
     {
         public AddProgrammingLanguageRequestProfile()
         {
-            CreateMap<AddProgrammingLanguageRequest, ProgrammingLanguageModel>();
+            CreateMap<AddProgrammingLanguageRequest, AddProgrammingLanguageModel>();
         }
     }
 }

@@ -39,16 +39,17 @@ namespace TaskLibrary.CommentService
             this.notificationService = notificationService;
         }
 
-        public async Task<IEnumerable<CommentModel>> GetComments()
+        public async Task<IEnumerable<CommentModel>> GetComments(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var comments = context
-                .Comments
+                .Comments.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .AsQueryable();
 
             comments = comments
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await comments.ToListAsync()).Select(comment => mapper.Map<CommentModel>(comment));
 
@@ -59,7 +60,7 @@ namespace TaskLibrary.CommentService
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
-            var comment = await context.Comments.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var comment = await context.Comments.Include(x=>x.User).Include(x=>x.ProgrammingTask).FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             var data = mapper.Map<CommentModel>(comment);
 
@@ -74,6 +75,7 @@ namespace TaskLibrary.CommentService
             var comment = mapper.Map<Comment>(model);
             await context.Comments.AddAsync(comment);
             context.SaveChanges();
+            var com = await GetComment(comment.Id);
             var subs=await subscribtionService.GetSubscriptionsByTask(comment.ProgrammingTaskId);
             
             foreach(var sub in subs)
@@ -81,8 +83,8 @@ namespace TaskLibrary.CommentService
                 await notificationService.AddNotification(new NotificationService.Models.AddNotificationModel
                 {
                     SubscribtionId = sub.Id,
-                    Text = comment.User.UserName + "оставил комментарий к задаче " + comment.ProgrammingTask.Name
-                });
+                    Text = com.UserName + " оставил комментарий к задаче " + com.TaskName
+                });;
                 
             }
 
@@ -120,7 +122,7 @@ namespace TaskLibrary.CommentService
             using var context = await contextFactory.CreateDbContextAsync();
 
             var comments = context
-                .Comments
+                .Comments.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .Where(x => x.ProgrammingTaskId.Equals(taskId))
                 .AsQueryable();
 
@@ -136,7 +138,7 @@ namespace TaskLibrary.CommentService
             using var context = await contextFactory.CreateDbContextAsync();
 
             var comments = context
-                .Comments
+                .Comments.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .Where(x => x.UserId.Equals(userId))
                 .AsQueryable();
 

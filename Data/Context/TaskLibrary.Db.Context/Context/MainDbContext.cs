@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,13 @@ using TaskLibrary.Db.Entities;
 
 namespace TaskLibrary.Db.Context.Context
 {
-    public class MainDbContext:DbContext
+    public class MainDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public MainDbContext(DbContextOptions<MainDbContext>options) : base(options) { }
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<User> Users { get;set; }
+       // public DbSet<User> Users { get;set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<LanguageForTask> LanguageForTasks { get; set; }
         public DbSet<Notification> Notifications { get; set; }
@@ -39,12 +40,12 @@ namespace TaskLibrary.Db.Context.Context
             modelBuilder.Entity<Solution>().ToTable("solutions");
             modelBuilder.Entity<Subscription>().ToTable("subscribtions");
 
-           /* modelBuilder.Entity<IdentityRole<Guid>>().ToTable("user_roles");
+            modelBuilder.Entity<IdentityRole<Guid>>().ToTable("user_roles");
             modelBuilder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");
             modelBuilder.Entity<IdentityUserRole<Guid>>().ToTable("user_role_owners");
             modelBuilder.Entity<IdentityRoleClaim<Guid>>().ToTable("user_role_claims");
             modelBuilder.Entity<IdentityUserLogin<Guid>>().ToTable("user_logins");
-            modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("user_claims");*/
+            modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("user_claims");
 
             modelBuilder.Entity<ProgrammingTask>().HasOne(x => x.User).WithMany(x => x.ProgrammingTasks).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<ProgrammingTask>().HasOne(x => x.Category).WithMany(x => x.ProgrammingTasks).HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.SetNull);

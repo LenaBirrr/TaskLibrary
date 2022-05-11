@@ -29,7 +29,7 @@ services.AddAppSwagger(settings);
 
 services.AddAppCors();
 services.AddAppServices();
-
+services.AddAppAuth(settings);
 services.AddControllers().AddValidator();
 
 services.AddRazorPages();
@@ -39,7 +39,7 @@ services.AddRazorPages();
 
 services.AddAutoMappers();
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -62,7 +62,7 @@ app.UseSerilogRequestLogging();
 
 app.MapRazorPages();
 
-app.UseAuthorization();
+app.UseAppAuth();
 
 app.MapControllers();
 

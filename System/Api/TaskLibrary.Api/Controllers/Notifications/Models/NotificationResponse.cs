@@ -7,7 +7,6 @@ namespace TaskLibrary.Api.Controllers.Notifications.Models
     {
         public int Id { get; set; }
 
-        public string CommentAuthor { get; set; }
         public string TaskName { get; set; }
         public int? SubscribtionId { get; set; }
         public string Text { get; set; }
@@ -17,7 +16,7 @@ namespace TaskLibrary.Api.Controllers.Notifications.Models
     {
         public NotificationResponseProfile()
         {
-            CreateMap<NotificationResponse, NotificationModel>();
+            CreateMap<NotificationModel, NotificationResponse>();
         }
     }
 }

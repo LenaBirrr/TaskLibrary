@@ -31,7 +31,7 @@ namespace TaskLibrary.CategoryService
             this.updateCategoryModelValidator = updateCategoryModelValidator;
         }
 
-        public async Task<IEnumerable<CategoryModel>> GetCategories()
+        public async Task<IEnumerable<CategoryModel>> GetCategories(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
@@ -40,7 +40,8 @@ namespace TaskLibrary.CategoryService
                 .AsQueryable();
 
             categories = categories
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await categories.ToListAsync()).Select(category => mapper.Map<CategoryModel>(category));
 

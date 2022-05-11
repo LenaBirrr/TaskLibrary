@@ -29,33 +29,35 @@ namespace TaskLibrary.SubscriptionService
             this.updateSubscriptionModelValidator = updateSubscriptionModelValidator;
         }
 
-        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptions()
+        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptions(int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var subscriptions = context
-                .Subscriptions
+                .Subscriptions.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .AsQueryable();
 
             subscriptions = subscriptions
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await subscriptions.ToListAsync()).Select(subscription => mapper.Map<SubscriptionModel>(subscription));
 
             return data;
 
         }
-        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByUser(Guid userId)
+        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByUser(Guid userId, int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var subscriptions = context
-                .Subscriptions
+                .Subscriptions.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .Where(x => x.UserId.Equals(userId))
                 .AsQueryable();
 
             subscriptions = subscriptions
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await subscriptions.ToListAsync()).Select(subscription => mapper.Map<SubscriptionModel>(subscription));
 
@@ -66,7 +68,7 @@ namespace TaskLibrary.SubscriptionService
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
-            var subscriptions = await context.Subscriptions.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            var subscriptions = await context.Subscriptions.Include(x => x.User).Include(x => x.ProgrammingTask).FirstOrDefaultAsync(x => x.Id.Equals(id));
 
             var data = mapper.Map<SubscriptionModel>(subscriptions);
 
@@ -110,17 +112,18 @@ namespace TaskLibrary.SubscriptionService
             context.SaveChanges();
         }
 
-        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByTask(int taskId)
+        public async Task<IEnumerable<SubscriptionModel>> GetSubscriptionsByTask(int taskId, int offset = 0, int limit = 10)
         {
             using var context = await contextFactory.CreateDbContextAsync();
 
             var subscriptions = context
-                .Subscriptions
+                .Subscriptions.Include(x => x.User).Include(x => x.ProgrammingTask)
                 .Where(x => x.ProgrammingTaskId.Equals(taskId))
                 .AsQueryable();
 
             subscriptions = subscriptions
-                .Take(1000);
+                .Skip(Math.Max(offset, 0))
+                .Take(Math.Max(0, Math.Min(limit, 1000)));
 
             var data = (await subscriptions.ToListAsync()).Select(subscription => mapper.Map<SubscriptionModel>(subscription));
 

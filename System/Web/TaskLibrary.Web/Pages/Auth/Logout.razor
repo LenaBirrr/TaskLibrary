@@ -1,0 +1,19 @@
+﻿@page "/logout"
+@using TaskLibrary.WEB
+
+
+@attribute [Authorize]
+
+@inject IAuthService AuthService
+
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("/");
+    }
+}
+© 2022 GitHub, Inc.
+Terms

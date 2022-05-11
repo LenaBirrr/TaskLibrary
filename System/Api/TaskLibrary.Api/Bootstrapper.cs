@@ -6,6 +6,9 @@ using TaskLibrary.ProgrammingTaskService;
 using TaskLibrary.Settings;
 using TaskLibrary.SolutionService;
 using TaskLibrary.SubscriptionService;
+using TaskLibrary.SMTPService;
+using TaskLibrary.RabbitMQService;
+using TaskLibrary.UserAccount;
 
 namespace TaskLibrary.Api
 {
@@ -22,9 +25,9 @@ namespace TaskLibrary.Api
                 .AddProgrammingTaskService()
                 .AddSolutionService()
                 .AddSubscriptionService()
-                //.AddEmailSender()
-                //.AddRabbitMq()
-                //.AddUserAccountService()
+                .AddEmailSender()
+                .AddRabbitMq()
+                .AddUserAccountService()
                 ;
         }
     }
